@@ -7,7 +7,7 @@ function gestionar_opciones {
     function conectar_vpn {
         clear
         echo "¿Qué deseas hacer?"
-        echo "1. Conectar a VPN de laboratorio"
+        echo "1. Conectar a VPN"
         echo "2. Interrumpir la conexión VPN"
         echo "3. Volver al menú principal"
         echo "4. Salir del script"
@@ -15,25 +15,70 @@ function gestionar_opciones {
 
         case $opcion_vpn in
             1 )
-                #!/bin/bash
+                # Submenú para seleccionar tipo de VPN
                 clear
-                echo "Intentando conectar a VPN de laboratorio..."
+                echo "Selecciona la VPN a la que deseas conectarte:"
+                echo "1. Academia HTB"
+                echo "2. Laboratorio"
+                echo "3. Starting Point HTB"
+                echo "4. Volver"
+                read tipo_vpn
 
-                # Ejecutar OpenVPN en segundo plano con redirección de salida a un archivo de log
-                sudo openvpn TU_VPN > /tmp/openvpn.log 2>&1 &
-
-                # Esperar 5 segundos para que la conexión se establezca
-                sleep 5
-
-                # Verificar si el proceso openvpn con el archivo de configuración específico se está ejecutando
-                if pgrep -f "TU_VPN" > /dev/null; then
-                echo "Conexión a VPN de laboratorio exitosa"
-                else
-                echo "Error: La conexión a VPN de laboratorio falló."
-                # Mostrar los últimos 10 mensajes del archivo de log para ayudar a diagnosticar el problema
-                echo "Últimos mensajes del log de OpenVPN:"
-                tail -n 10 /tmp/openvpn.log
-                fi
+                case $tipo_vpn in
+                    1 )
+                        clear
+                        echo "Intentando conectar a VPN de Academia HTB..."
+                        sudo openvpn TU_ACADEMY > /tmp/openvpn_academy.log 2>&1 &
+                        sleep 5
+                        
+                        if pgrep -f TU_ACADEMY > /dev/null; then
+                            echo "Conexión a VPN de Academia HTB exitosa"
+                            echo "Puedes verificar tu conexión con: ip a | grep tun"
+                        else
+                            echo "Error: La conexión a VPN de Academia HTB falló."
+                            echo "Últimos mensajes del log de OpenVPN:"
+                            tail -n 10 /tmp/openvpn_academy.log
+                        fi
+                        ;;
+                    2 )
+                        clear
+                        echo "Intentando conectar a VPN de laboratorio..."
+                        sudo openvpn TU_LAB > /tmp/openvpn_lab.log 2>&1 &
+                        sleep 5
+                        
+                        if pgrep -f TU_LAB > /dev/null; then
+                            echo "Conexión a VPN de laboratorio exitosa"
+                            echo "Puedes verificar tu conexión con: ip a | grep tun"
+                        else
+                            echo "Error: La conexión a VPN de laboratorio falló."
+                            echo "Últimos mensajes del log de OpenVPN:"
+                            tail -n 10 /tmp/openvpn_lab.log
+                        fi
+                        ;;
+                    3 )
+                        clear
+                        echo "Intentando conectar a Starting Point HTB..."
+                        sudo openvpn TU_STARTING_POINT > /tmp/openvpn_lab.log 2>&1 &
+                        sleep 5
+                            
+                        if pgrep -f "TU_STARTING_POINT" > /dev/null; then
+                            echo "Conexión a Starting Point HTB exitosa"
+                            echo "Puedes verificar tu conexión con: ip a | grep tun"
+                        else
+                            echo "Error: La conexión a Starting Point HTB falló."
+                            echo "Últimos mensajes del log de OpenVPN:"
+                            tail -n 10 /tmp/openvpn_sp.log
+                        fi
+                        ;;
+                    4 )
+                        conectar_vpn
+                        ;;
+                    * )
+                        echo "Opción no válida."
+                        sleep 2
+                        conectar_vpn
+                        ;;
+                esac
                 ;;
             2 )
                 clear
@@ -42,7 +87,7 @@ function gestionar_opciones {
                     sudo -S pkill openvpn
                     sleep 2
                     if ! pgrep openvpn &>/dev/null; then
-                        echo "Conexion VPN interrumpida con exito "
+                        echo "Conexión VPN interrumpida con éxito"
                     fi
                 else
                     echo "No hay conexión VPN activa."
@@ -52,15 +97,15 @@ function gestionar_opciones {
                 clear
                 gestionar_opciones
                 ;;
-	    5 )
-		clear
+            4 )
+                clear
                 echo "Saliendo del programa"
                 exit 0
                 ;;
             * )
                 clear
                 echo "Opción no válida."
-		exit 127
+                exit 127
                 ;;
         esac
     }
@@ -129,14 +174,14 @@ function gestionar_opciones {
                 gestionar_opciones
                 ;;
             5 )
-		clear
+                clear
                 echo "Saliendo del programa"
-	        exit 0
-		;;
+                exit 0
+                ;;
             * )
                 clear
                 echo "Opción no válida."
-		exit 127
+                exit 127
                 ;;
         esac
     }
@@ -158,8 +203,8 @@ function gestionar_opciones {
             ;;
         3 )
             gestionar_opciones
-	   ;; 
-	4 )
+            ;;
+        4 )
             clear
             echo "Saliendo del script."
             exit 0
@@ -167,12 +212,11 @@ function gestionar_opciones {
         * )
             clear
             echo "Opción no válida."
-	    exit 127
+            exit 127
             ;;
     esac
 }
 
 gestionar_opciones
-
 
 
