@@ -61,7 +61,7 @@ function gestionar_opciones {
                         sudo openvpn TU_STARTING_POINT > /tmp/openvpn_lab.log 2>&1 &
                         sleep 5
                             
-                        if pgrep -f "TU_STARTING_POINT" > /dev/null; then
+                        if pgrep -f TU_STARTING_POINT > /dev/null; then
                             echo "Conexión a Starting Point HTB exitosa"
                             echo "Puedes verificar tu conexión con: ip a | grep tun"
                         else
